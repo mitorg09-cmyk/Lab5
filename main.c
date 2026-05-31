@@ -12,11 +12,45 @@ int DelElByTail(struct point** list);
 int DelElByHead(struct point** list);
 int DelList(struct point** list);
 int DelElByPos(struct point** list, size_t pos);
+int DelElByData(struct point** list, int x, int y);
+int PrintList(struct point* list); // With debug logic
 
 int main()
 {
     printf("Hello World!\n");
     return 0;
+}
+
+int DelElByData(struct point** list, int x, int y)
+{
+  if(!list) return -1;
+  if(!*list) return 1;
+
+  struct point* fHead = *list;
+
+  while((fHead->x != x || fHead->y != y) && fHead->next)
+    fHead = fHead->next;
+
+  if(fHead->x == x && fHead->y == y)
+  {
+    if(!(fHead->prev)) // if Head
+    {
+      *list = (*list)->next;
+      (*list)->prev = NULL;
+    }
+    else // if just element
+    {
+      fHead->prev->next = fHead->next;
+      if(fHead->next) // Tail check
+        fHead->next->prev = fHead->prev;
+    }
+    free(fHead);
+    return 0;
+  }
+  else
+    return 2; // 2 - el does not exists
+
+  return 0;
 }
 
 int DelElByPos(struct point** list, size_t pos)
@@ -95,6 +129,27 @@ int DelList(struct point** list)
     *list = (*list)->next;
     free(ptrIx);
   }
+
+  return 0;
+}
+
+int PrintList(struct point* list)
+{
+  if(!list) return 1;
+
+  do
+  {
+    printf("x = %d\ny = %d\n", list->x, list->y);
+    list = list->next;
+  }while(list->next);
+
+  // FOR DEBUG - BACK LINKS CHECK
+  while(list)
+  {
+    printf("bx = %d\nby = %d\n", list->x, list->y);
+    list = list->prev;
+  }
+  // ----------------------------
 
   return 0;
 }
