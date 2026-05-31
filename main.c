@@ -4,6 +4,7 @@ struct point
 {
   int x, y;
   struct point* next;
+  struct point* prev;
 };
 
 int main()
