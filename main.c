@@ -14,11 +14,30 @@ int DelList(struct point** list);
 int DelElByPos(struct point** list, size_t pos);
 int DelElByData(struct point** list, int x, int y);
 int PrintList(struct point* list); // With debug logic
+int AddElToHead(struct point** list, int x, int y);
 
 int main()
 {
     printf("Hello World!\n");
     return 0;
+}
+
+int AddElToHead(struct point** list, int x, int y)
+{
+  if(!list) return -1;
+  // if(!*list) return 1;
+
+  struct point* ptrNewEl = (struct point*)malloc(sizeof(struct point));
+  if(!ptrNewEl) return 3;
+  ptrNewEl->x = x;
+  ptrNewEl->y = y;
+  ptrNewEl->prev = NULL;
+  ptrNewEl->next = *list;
+  if(ptrNewEl->next) // empty list check
+    ptrNewEl->next->prev = ptrNewEl;
+  *list = ptrNewEl;
+
+  return 0;
 }
 
 int DelElByData(struct point** list, int x, int y)
