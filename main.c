@@ -16,11 +16,163 @@ int DelElByData(struct point** list, int x, int y);
 int PrintList(struct point* list); // With debug logic
 int AddElToHead(struct point** list, int x, int y);
 int AddElToTail(struct point** list, int x, int y);
+int AddElAtPos(struct point** list, size_t pos, int x, int y);
+int AddElBefore(struct point** list, size_t pos, int x, int y);
+int AddElAfter(struct point* list, size_t pos, int x, int y);
+int FindEl(struct point* list, int x, int y);
 
 int main()
 {
     printf("Hello World!\n");
     return 0;
+}
+
+int FindEl(struct point* list, int x, int y)
+{
+  if(!list) return -1;
+  if(!*list) return 1;
+
+  struct point* fHead = *list;
+
+  while((fHead->x != x || fHead->y != y) && fHead->next)
+    fHead = fHead->next;
+
+  if(fHead->x == x && fHead->y == y)
+  {
+    if(!(fHead->prev)) // if Head
+    {
+      *list = (*list)->next;
+      (*list)->prev = NULL;
+    }
+    else // if just element
+    {
+      fHead->prev->next = fHead->next;
+      if(fHead->next) // Tail check
+        fHead->next->prev = fHead->prev;
+    }
+    free(fHead);
+    return 0;
+  }
+  else
+    return 2; // 2 - el does not exists
+
+  return 0;
+}
+
+int AddElAfter(struct point* list, size_t pos, int x, int y)
+{
+  if(!list) return -1;
+  if(pos == 0) return 2; // 2 - pos does not exists
+
+  struct point* ptrNewEl = (struct point*)malloc(sizeof(struct point));
+  if(!ptrNewEl) return 3;
+  ptrNewEl->x = x;
+  ptrNewEl->y = y;
+
+  size_t i = 0;
+  struct point* fHead = list;
+
+  for(i = 1; i < pos && fHead; i++, fHead = fHead->next);
+
+  if(i == pos && fHead)
+  {
+    ptrNewEl->next = fHead->next;
+    ptrNewEl->prev = fHead;
+    if(fHead->next)
+      fHead->next->prev = ptrNewEl;
+    fHead->next = ptrNewEl;
+
+    return 0;
+  }
+  else
+    return 2; // 2 - pos does not exists
+
+  return 0;
+}
+
+int AddElBefore(struct point** list, size_t pos, int x, int y)
+{
+  if(!list) return -1;
+  if(!*list) return 1;
+
+  struct point* ptrNewEl = (struct point*)malloc(sizeof(struct point));
+  if(!ptrNewEl) return 3;
+  ptrNewEl->x = x;
+  ptrNewEl->y = y;
+
+  if(pos == 1) // if before head
+  {
+    ptrNewEl->next = *list;
+    ptrNewEl->prev = NULL;
+    (*list)->prev = ptrNewEl;
+    *list = ptrNewEl;
+
+    return 0;
+  }
+
+  size_t i = 0;
+  struct point* fHead = *list;
+
+  for(i = 1; i < pos && fHead; i++, fHead = fHead->next);
+
+  if(i == pos && fHead)
+  {
+    ptrNewEl->next = fHead;
+    ptrNewEl->prev = fHead->prev;
+    fHead->prev = ptrNewEl;
+    ptrNewEl->prev->next = ptrNewEl;
+
+    return 0;
+  }
+  else
+    return 2; // 2 - pos does not exists
+
+  return 0;
+}
+
+int AddElAtPos(struct point** list, size_t pos, int x, int y)
+{
+  if(!list) return -1;
+  if(pos == 0) return 2; // 2 - pos does not exists
+
+  struct point* ptrNewEl = (struct point*)malloc(sizeof(struct point));
+  if(!ptrNewEl) return 3;
+  ptrNewEl->x = x;
+  ptrNewEl->y = y;
+
+  if(pos == 1) // if before head
+  {
+    ptrNewEl->next = *list;
+    ptrNewEl->prev = NULL;
+    if(*list)
+      (*list)->prev = ptrNewEl;
+    *list = ptrNewEl;
+
+    return 0;
+  }
+
+  if(!*list) return 1;
+
+  size_t i = 0;
+  struct point* fHead = *list;
+
+  pos--;
+  for(i = 1; i < pos && fHead; i++, fHead = fHead->next);
+
+  if(i == pos && fHead)
+  {
+    ptrNewEl->next = fHead->next;
+    ptrNewEl->prev = fHead;
+    if(fHead->next)
+      fHead->next->prev = ptrNewEl;
+    fHead->next = ptrNewEl;
+
+    return 0;
+  }
+  else
+    return 2; // 2 - pos does not exists
+
+  return 0;
 }
 
 int AddElToTail(struct point** list, int x, int y)
@@ -106,7 +258,7 @@ int DelElByPos(struct point** list, size_t pos)
 
   for(i = 1; i < pos && fHead; i++, fHead = fHead->next);
 
-  if(i == pos)
+  if(i == pos && fHead)
   {
     if(!(fHead->prev)) // if Head
     {
