@@ -31,10 +31,10 @@ int main()
   // AddElAfter(list, 10, 99999, 999999); // Add After tail test
   // PrintList(list);
 
-  // AddElBefore(&list, 1, 99999, 999999); // Add before head test
+  // AddElBefore(&list, 1, 555555, 555555); // Add before head test
   // PrintList(list);
 
-  // AddElBefore(&list, 10, 99999, 999999); // Add before tail test
+  // AddElBefore(&list, 12, 777777, 7777777); // Add before tail test
   // PrintList(list);
 
 
@@ -52,11 +52,33 @@ int main()
   // PrintList(list);
   // // -----------------------------------------
 
-  for(int i = 0; i < 30; i++)
-    DelElByPos(&list, i);
+  // for(int i = 0; i < 30; i++) // Delete per one (10 elements -> 5 elements)
+  //   DelElByPos(&list, i);
+  // PrintList(list);
+
+  // for(int i = 30; i >= 0; i--) // Delete all elements
+  //   DelElByPos(&list, i);
+  // PrintList(list);
+
+  // AddElAtPos(&list, 5, 1212, 1212); // Find el in list
+  // struct point* el = FindEl(list, 1212, 1212);
+  // if(el)
+  //   printf("FOUND: x = %d, y = %d\n", el->x, el->y);
+  // else
+  //   printf("WRONG\n");
+
+
+
+  DelList(&list); // Clear list with debug info
   PrintList(list);
 
+  // while(list) // Clear list by del tail
+  //   DelElByTail(&list);
 
+  // while(list) // Clear list by del head
+  //   DelElByHead(&list);
+
+  return 0;
 }
 
 struct point* FindEl(struct point* list, int x, int y)
@@ -363,7 +385,7 @@ int DelList(struct point** list)
     free(ptrIx);
 
     i++; // FOR DEBUG
-    printf("FREE NM &d ", i); // FOR DEBUG
+    printf("FREE-NM-%d ", i); // FOR DEBUG
   }
 
   printf("\n"); // FOR DEBUG
@@ -375,23 +397,30 @@ int PrintList(struct point* list)
 {
   if(!list) return 1;
 
-  printf("x = %d\ny = %d\n\n", list->x, list->y);
+  int i = 1; //FOR DEBUG
+  printf("START-------------------------------------------------\n");
+  printf("x = %d\ny = %d idx = %d\n\n", list->x, list->y, i);
   do
   {
     if(list->next)
     {
       list = list->next;
-      printf("x = %d\ny = %d\n\n", list->x, list->y);
+      i++;
+      printf("x = %d\ny = %d idx = %d\n\n", list->x, list->y, i);
     }
   }while(list->next);
 
   // FOR DEBUG - BACK LINKS CHECK
   while(list)
   {
-    printf("bx = %d\nby = %d\n\n", list->x, list->y);
+    printf("bx = %d\nby = %d idx = %d\n\n", list->x, list->y, i);
+    i--;
     list = list->prev;
   }
+  printf("END-------------------------------------------------\n");
   // ----------------------------
+
+  printf("\n");
 
   return 0;
 }
