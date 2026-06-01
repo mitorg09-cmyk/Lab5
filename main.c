@@ -19,42 +19,61 @@ int AddElToTail(struct point** list, int x, int y);
 int AddElAtPos(struct point** list, size_t pos, int x, int y);
 int AddElBefore(struct point** list, size_t pos, int x, int y);
 int AddElAfter(struct point* list, size_t pos, int x, int y);
-int FindEl(struct point* list, int x, int y);
+struct point* FindEl(struct point* list, int x, int y);
 
 int main()
 {
-    printf("Hello World!\n");
-    return 0;
+  struct point* list = NULL;
+  for(int i = 0; i < 10; i++)
+    AddElAtPos(&list, i + 1, 10, 10);
+  // PrintList(list);
+
+  // AddElAfter(list, 10, 99999, 999999); // Add After tail test
+  // PrintList(list);
+
+  // AddElBefore(&list, 1, 99999, 999999); // Add before head test
+  // PrintList(list);
+
+  // AddElBefore(&list, 10, 99999, 999999); // Add before tail test
+  // PrintList(list);
+
+
+  // // ADD TO HEAD AND TAIL AND DEL BY DATA TEST
+  // AddElToHead(&list, 99999, 999999);
+  // PrintList(list);
+
+  // DelElByData(&list, 99999, 999999);
+  // PrintList(list);
+
+  // AddElToTail(&list, 99999, 999999);
+  // PrintList(list);
+
+  // DelElByData(&list, 99999, 999999);
+  // PrintList(list);
+  // // -----------------------------------------
+
+  for(int i = 0; i < 30; i++)
+    DelElByPos(&list, i);
+  PrintList(list);
+
+
 }
 
-int FindEl(struct point* list, int x, int y)
+struct point* FindEl(struct point* list, int x, int y)
 {
-  if(!list) return -1;
-  if(!*list) return 1;
+  if(!list) return NULL;
 
-  struct point* fHead = *list;
+  struct point* fHead = list;
 
   while((fHead->x != x || fHead->y != y) && fHead->next)
     fHead = fHead->next;
 
   if(fHead->x == x && fHead->y == y)
   {
-    if(!(fHead->prev)) // if Head
-    {
-      *list = (*list)->next;
-      (*list)->prev = NULL;
-    }
-    else // if just element
-    {
-      fHead->prev->next = fHead->next;
-      if(fHead->next) // Tail check
-        fHead->next->prev = fHead->prev;
-    }
-    free(fHead);
-    return 0;
+    return fHead;
   }
   else
-    return 2; // 2 - el does not exists
+    return NULL; // 2 - el does not exists
 
   return 0;
 }
@@ -262,7 +281,15 @@ int DelElByPos(struct point** list, size_t pos)
   {
     if(!(fHead->prev)) // if Head
     {
-      *list = (*list)->next;
+      if((*list)->next) // Tail check
+        {*list = (*list)->next;}
+      else
+      {
+        free(*list);
+        *list = NULL;
+        return 0;
+      }
+
       (*list)->prev = NULL;
     }
     else // if just element
@@ -305,7 +332,16 @@ int DelElByHead(struct point** list)
   if(!*list) return 1;
 
   struct point* ptrIx = *list;
-  *list = (*list)->next;
+
+  if((*list)->next) // Tail check
+    {*list = (*list)->next;}
+  else
+  {
+    free(*list);
+    *list = NULL;
+    return 0;
+  }
+
   (*list)->prev = NULL;
   free(ptrIx);
 
@@ -317,13 +353,20 @@ int DelList(struct point** list)
   if(!list) return -1;
   if(!*list) return 1;
 
+  size_t i = 0; // FOR DEBUG
+
   struct point* ptrIx = NULL;
   while(*list)
   {
     ptrIx = *list;
     *list = (*list)->next;
     free(ptrIx);
+
+    i++; // FOR DEBUG
+    printf("FREE NM &d ", i); // FOR DEBUG
   }
+
+  printf("\n"); // FOR DEBUG
 
   return 0;
 }
@@ -332,16 +375,20 @@ int PrintList(struct point* list)
 {
   if(!list) return 1;
 
+  printf("x = %d\ny = %d\n\n", list->x, list->y);
   do
   {
-    printf("x = %d\ny = %d\n", list->x, list->y);
-    list = list->next;
+    if(list->next)
+    {
+      list = list->next;
+      printf("x = %d\ny = %d\n\n", list->x, list->y);
+    }
   }while(list->next);
 
   // FOR DEBUG - BACK LINKS CHECK
   while(list)
   {
-    printf("bx = %d\nby = %d\n", list->x, list->y);
+    printf("bx = %d\nby = %d\n\n", list->x, list->y);
     list = list->prev;
   }
   // ----------------------------
